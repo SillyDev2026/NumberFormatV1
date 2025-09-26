@@ -22,8 +22,10 @@ local beginning = {'k', 'm', 'b', 'T'}
 
 function tab.suffixPart(index: number): string
 	local hund = math.floor(index/100)
-	index=index%100
-	local ten,one = math.floor(index/10), index%10
+	index = math.fmod(index, 100)
+	local ten = math.floor(index/10)
+	index = math.fmod(index, 10)
+	local one = math.floor(index/1)
 	return (first[one+1] or '') .. (second[ten+1] or '') .. (third[hund+1] or '')
 end
 
@@ -111,12 +113,12 @@ function tab.short(x: number, canDecimal: number?, canComma: boolean?): string
 	if x < 1e3 then return tostring(tab.floord(x+0.001, canDecimal)) end
 	local exp = math.floor(math.log10(x))
 	local index = math.floor(exp/3)
-	local man = tab.floord(x/10^(index*3), canDecimal)
+	local man = tab.floord(x/10^(index*3) + 0.001, canDecimal)
 	local start = #beginning
 	if canComma then
 		return tab.Comma(x)
 	else
-		if index >= 101 then return 'Inf' end
+		if index > 102 then return 'Inf' end
 		if index <= start then
 			return man .. beginning[index]
 		end
@@ -136,7 +138,7 @@ function tab.format(x: number, canDecimal: number?, canComma: boolean?): string
 		local index = math.floor((exp-15)/3)+1
 		local man = x/(10^(15+(index-1)*3))
 		local alp = tab.createAlpha(index)
-		return tab.floord(man, canDecimal) .. alp
+		return tab.floord(man + 0.001, canDecimal) .. alp
 	end
 	return tab.short(x, canDecimal, canComma)
 end
