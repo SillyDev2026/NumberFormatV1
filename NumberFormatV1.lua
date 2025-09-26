@@ -11,7 +11,7 @@ local ln2: number = 0.6931471805599453
 local ln10: number = 2.302585092994046
 local e: number = 2.718281828459045
 
-local canComma = 1e6 -- change this to set comma
+local cancomma = 1e6 -- change this to set comma
 
 local alpha = {} do
 	for i = string.byte('a'), string.byte('z') do
@@ -133,7 +133,7 @@ function tab.short(x: number, canDecimal: number?, canComma: boolean?): string
 	local index = math.floor(exp/3)
 	local man = tab.floord(x/10^(index*3) + 0.001, canDecimal)
 	local start = #beginning
-	if canComma and x <= canComma then
+	if canComma and x <= cancomma then
 		return tab.Comma(x)
 	else
 		if index > 102 then return 'Inf' end
