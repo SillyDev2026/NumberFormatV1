@@ -18,7 +18,7 @@ tab.pi, tab.tau, tab.huge, tab.e = pi, tau, inf, e
 local first = {'', 'U', 'D', 'T', 'Qd', 'Qn', 'Sx', 'Sp', 'Oc', 'No'}
 local second = {'', 'De', 'Vt', 'Tg', 'qg', 'Qg', 'sg', 'Sg', 'Og', 'Ng'}
 local third = {'', 'Ce'}
-local beginning = {'', 'k', 'm', 'b'}
+local beginning = {'k', 'm', 'b', 'T'}
 
 function tab.suffixPart(index: number): string
 	local hund = math.floor(index/100)
@@ -95,22 +95,32 @@ function tab.floord(x: number, decimal: number?): number
 	return (x*i)//1/i
 end
 
-function tab.floor2(a: number): number
-	return a -(a%1)
+function tab.Comma(n: number): string
+	local str = tostring(math.floor(n))
+	local result = str:reverse():gsub("(%d%d%d)","%1,") 
+	result = result:reverse()
+	if result:sub(1,1) == "," then
+		result = result:sub(2)
+	end
+	return result
 end
 
-function tab.short(x: number, canDecimal: number?): string
+function tab.short(x: number, canDecimal: number?, canComma: boolean?): string
 	canDecimal = canDecimal or 2
+	canComma = canComma or false
 	if x < 1e3 then return tostring(tab.floord(x+0.001, canDecimal)) end
 	local exp = math.floor(math.log10(x))
 	local index = math.floor(exp/3)
 	local man = tab.floord(x/10^(index*3), canDecimal)
-	local start = #beginning-1
-	if index >= 101 then return 'Inf' end
-	if index <= start then
-		return man .. beginning[index+1]
+	local start = #beginning
+	if canComma then
+		return tab.Comma(x)
 	else
-		return man .. tab.suffixPart(index-start)
+		if index >= 101 then return 'Inf' end
+		if index <= start then
+			return man .. beginning[index]
+		end
+		return man .. tab.suffixPart(index-1)
 	end
 end
 
@@ -120,7 +130,7 @@ function tab.createAlpha(index: number): string
 	return fir .. sec
 end
 
-function tab.format(x: number, canDecimal: number?): string
+function tab.format(x: number, canDecimal: number?, canComma: boolean?): string
 	if x >= 1e15 then
 		local exp = math.floor(math.log10(x))
 		local index = math.floor((exp-15)/3)+1
@@ -128,7 +138,7 @@ function tab.format(x: number, canDecimal: number?): string
 		local alp = tab.createAlpha(index)
 		return tab.floord(man, canDecimal) .. alp
 	end
-	return tab.short(x, canDecimal)
+	return tab.short(x, canDecimal, canComma)
 end
 
 function tab.me(val1: number, val2: number): boolean
