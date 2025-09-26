@@ -45,12 +45,26 @@ function tab.sign(x: number): number
 	return (x > 0 and 1) or (x < 0 and -1) or 0
 end
 
-function tab.min(a: number, b: number): number
-	return (a < b and a) or b
+function tab.min(base: number, ...: number): number
+	local args = {...}
+	local min = base
+	for i = 1, #args do
+		if args[i] < min then
+			min = args[i]
+		end
+	end
+	return min
 end
 
-function tab.max(a: number, b: number): number
-	return (a > b and a) or b
+function tab.max(base: number, ...: number): number
+	local args = {...}
+	local max = base
+	for i = 1, #args do
+		if args[i] > max then
+			max = args[i]
+		end
+	end
+	return max
 end
 
 function tab.clamp(a: number, b: number, c: number): number
